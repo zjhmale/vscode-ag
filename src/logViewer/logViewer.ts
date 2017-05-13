@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import * as htmlGenerator from './htmlGenerator';
-import { MatchRecord } from '../contracts';
 import * as path from 'path';
 import * as cp from 'child_process'
 import * as os from 'os'
@@ -14,14 +13,17 @@ let pageIndex = 0;
 let pageSize = PAGE_SIZE;
 let canGoPrevious = false;
 let canGoNext = true;
+let matchRecords: string[] = [];
+let searchText = "";
 
 class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
-    private entries: MatchRecord[];
+    private entries: string[];
 
     public async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
         try {
-            const entries : MatchRecord[] = [];
+            const entries: string[] = matchRecords;
+            console.log(JSON.stringify(entries.length));
             canGoPrevious = pageIndex > 0;
             canGoNext = entries.length === pageSize;
             this.entries = entries;
@@ -66,7 +68,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     }
 
     private generateHistoryView(): string {
-        const innerHtml = htmlGenerator.generateHistoryHtmlView(this.entries, canGoPrevious, canGoNext);
+        const innerHtml = htmlGenerator.generateHistoryHtmlView(this.entries, searchText, canGoPrevious, canGoNext);
         return `
             <head>
                 <link rel="stylesheet" href="${this.getNodeModulesPath(path.join('normalize.css', 'normalize.css'))}" >
@@ -77,7 +79,6 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
                 <script src="${this.getNodeModulesPath(path.join('jquery', 'dist', 'jquery.min.js'))}"></script>
                 <script src="${this.getNodeModulesPath(path.join('clipboard', 'dist', 'clipboard.min.js'))}"></script>
                 <script src="${this.getScriptFilePath('proxy.js')}"></script>
-                <script src="${this.getScriptFilePath('svgGenerator.js')}"></script>
                 <script src="${this.getScriptFilePath('detailsView.js')}"></script>
             </head>
 
@@ -116,12 +117,19 @@ export function activate(context: vscode.ExtensionContext) {
 
     disposable = vscode.commands.registerCommand('mock.trigger', (value: string) => {
         console.log("============")
-        console.log(JSON.stringify(value))
-        let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: '/Users/capitalmatch/Documents/cm/capital-match' })
-        console.log(result.status)
-        console.log(result.stderr.toString())
-        console.log(result.stdout.toString().split(os.EOL).filter((l) => { return !_.isEmpty(l) }))
+        console.log(JSON.stringify(value));
+        let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: '/Users/capitalmatch/Documents/cm/capital-match' });
+        console.log(result.status);
+        console.log(result.stderr.toString());
+        console.log(result.stdout.toString());
         console.log("============")
+        if (value.length >= 3 && result.status == 0) {
+            matchRecords = result.stdout.toString().split(os.EOL).filter((l) => { return !_.isEmpty(l); });
+        } else {
+            matchRecords = [];
+        }
+        searchText = value
+        provider.update(previewUri);
     });
     context.subscriptions.push(disposable);
 }
