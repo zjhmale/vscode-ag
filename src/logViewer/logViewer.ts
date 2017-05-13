@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as htmlGenerator from './htmlGenerator';
-import { LogEntry } from '../contracts';
+import { MatchRecord } from '../contracts';
 import * as path from 'path';
 import * as cp from 'child_process'
 import * as os from 'os'
@@ -17,11 +17,11 @@ let canGoNext = true;
 
 class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
-    private entries: LogEntry[];
+    private entries: MatchRecord[];
 
     public async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
         try {
-            const entries : LogEntry[] = [];
+            const entries : MatchRecord[] = [];
             canGoPrevious = pageIndex > 0;
             canGoNext = entries.length === pageSize;
             this.entries = entries;

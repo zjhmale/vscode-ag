@@ -16,7 +16,6 @@
 
     $(document).ready(() => {
         initializeClipboard();
-        (window as any).GITHISTORY.generateSVG();
         (window as any).GITHISTORY.initializeDetailsView();
     });
 })();

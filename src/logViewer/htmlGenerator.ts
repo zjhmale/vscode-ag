@@ -1,4 +1,4 @@
-import { LogEntry } from '../contracts';
+import { MatchRecord } from '../contracts';
 import { encode as htmlEncode } from 'he';
 
 export function generateErrorView(error: any): string {
@@ -10,22 +10,8 @@ export function generateErrorView(error: any): string {
         </div>
     `;
 }
-export function generateProgressHtmlView(progressMessage: string): string {
-    return `
-        <div class ="container">
-            <div>${htmlEncode(progressMessage)}</div>
-            <div class="spinner">
-                <div class="rect1"></div>
-                <div class="rect2"></div>
-                <div class="rect3"></div>
-                <div class="rect4"></div>
-                <div class="rect5"></div>
-            </div>
-        </div>
-    `;
-}
 
-function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, canGoPrevious: boolean, canGoNext: boolean): string {
+function generateHistoryListContainer(entries: MatchRecord[], entriesHtml: string, canGoPrevious: boolean, canGoNext: boolean): string {
     let prevHref = canGoPrevious ? encodeURI('command:git.logNavigate?' + JSON.stringify(['previous'])) : '#';
     let nextHref = canGoNext ? encodeURI('command:git.logNavigate?' + JSON.stringify(['next'])) : '#';
 
@@ -94,36 +80,7 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
     `;
 }
 
-export function generateHeadRefHtmlView(entry: LogEntry): string {
-    if (entry.headRef)
-        return `
-            <div class="media-image">
-                <div class="commit-head-container">
-                    <div class="refs">
-                        <span>${htmlEncode(entry.headRef)}</span>
-                    </div>
-                </div>
-            </div>`;
-    return ``;
-}
-
-export function generateRemoteRefHtmlView(entry: LogEntry): string {
-    if (entry.remoteRefs && entry.remoteRefs.length > 0) {
-        return entry.remoteRefs.map((ref, index) => {
-            return `
-                <div class="media-image">
-                    <div class="commit-remote-container">
-                        <div class="refs">
-                            <span>${htmlEncode(ref)}</span>
-                        </div>
-                    </div>
-                </div>`;
-        }).join('');
-    }
-    return ``;
-}
-
-export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: boolean, canGoNext: boolean): string {
+export function generateHistoryHtmlView(entries: MatchRecord[], canGoPrevious: boolean, canGoNext: boolean): string {
     const entriesHtml = entries.map((entry, entryIndex) => {
         return `
             <div class="log-entry">
@@ -132,23 +89,19 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
                         <div class="commit-hash-container">
                             <div class="copy-button">
                                 <span class="btn clipboard hint--bottom hint--rounded hint--bounce"
-                                    data-clipboard-text="${entry.sha1.full}"
+                                    data-clipboard-text="${entry.file}"
                                     aria-label="Copy the full SHA">
                                     <i class="octicon octicon-clippy"></i>
                                 </span>
                             </div>
                             <div class="commit-hash">
-                                <span class="sha-code short" data-entry-index="${entryIndex}" aria-label="${entry.sha1.short}">${entry.sha1.short}</span>
+                                <span class="sha-code short" data-entry-index="${entryIndex}" aria-label="${entry.column}">${entry.line}</span>
                             </div>
                         </div>
                     </div>
                     <div class="media-content">
-                        <a class="commit-subject-link">${htmlEncode(entry.subject)}</a>
-                        <div class="commit-subject" data-entry-index="${entryIndex}">${htmlEncode(entry.subject)}</div>
-                        <div class="commit-author">
-                            <span class="name hint--right hint--rounded hint--bounce" aria-label="${entry.author.email}">${htmlEncode(entry.author.name)}</span>
-                            <span class="timestamp">on ${entry.author.localisedDate}</span>
-                        </div>
+                        <a class="commit-subject-link">${htmlEncode(entry.content)}</a>
+                        <div class="commit-subject" data-entry-index="${entryIndex}">${htmlEncode(entry.content)}</div>
                     </div>
                 </div>
             </div>
