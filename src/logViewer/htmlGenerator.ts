@@ -10,12 +10,7 @@ export function generateErrorView(error: any): string {
     `;
 }
 
-function generateHistoryListContainer(entries: string[], entriesHtml: string, searchValue: string, canGoPrevious: boolean, canGoNext: boolean): string {
-    let prevHref = canGoPrevious ? encodeURI('command:git.logNavigate?' + JSON.stringify(['previous'])) : '#';
-    let nextHref = canGoNext ? encodeURI('command:git.logNavigate?' + JSON.stringify(['next'])) : '#';
-
-    console.log("in generate html =: " + JSON.stringify(searchValue));
-
+function generateHistoryListContainer(entries: string[], entriesHtml: string, searchValue: string): string {
     return `
         <input type="text" name="ag-filter" id="ag-filter" placeholder="Search something here" value="${searchValue}">
         <a id="mocktrigger" href="#" style="display:none"><span>mock trigger</span></a>
@@ -23,29 +18,12 @@ function generateHistoryListContainer(entries: string[], entriesHtml: string, se
             <svg xmlns="http://www.w3.org/2000/svg"></svg>
             <div id="commit-history">
                 ${entriesHtml}
-                <div id="history-navbar">
-                    <ul class="navbar">
-                        <li class="navbar-item previous ${canGoPrevious || 'disabled'}">
-                            <a id="previous" href="${prevHref}" class="navbar-link" onClick="$('.previous').addClass('disabled');">
-                                <i class="octicon octicon-chevron-left"></i>
-                                <span>Previous</span>
-                            </a>
-                        </li>
-                        <li class="navbar-item next ${canGoNext || 'disabled'}">
-                            <a id="next" href="${nextHref}" class="navbar-link" onClick="$('.next').addClass('disabled');">
-                                <span>Next</span>
-                                <i class="octicon octicon-chevron-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="json entries hidden">${htmlEncode(JSON.stringify(entries))}</div>
             </div>
         </div>
         `;
 }
 
-export function generateHistoryHtmlView(entries: string[], searchValue: string, canGoPrevious: boolean, canGoNext: boolean): string {
+export function generateHistoryHtmlView(entries: string[], searchValue: string): string {
     const entriesHtml = entries.map((entry, entryIndex) => {
         return `
             <div class="log-entry">
@@ -59,5 +37,5 @@ export function generateHistoryHtmlView(entries: string[], searchValue: string, 
         `;
     }).join('');
 
-    return generateHistoryListContainer(entries, entriesHtml, searchValue, canGoPrevious, canGoNext);
+    return generateHistoryListContainer(entries, entriesHtml, searchValue);
 }
