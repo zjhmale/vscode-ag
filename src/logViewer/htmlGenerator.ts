@@ -14,6 +14,8 @@ function generateHistoryListContainer(entries: string[], entriesHtml: string, se
     let prevHref = canGoPrevious ? encodeURI('command:git.logNavigate?' + JSON.stringify(['previous'])) : '#';
     let nextHref = canGoNext ? encodeURI('command:git.logNavigate?' + JSON.stringify(['next'])) : '#';
 
+    console.log("in generate html =: " + JSON.stringify(searchValue));
+
     return `
         <input type="text" name="ag-filter" id="ag-filter" placeholder="Search something here" value="${searchValue}">
         <a id="mocktrigger" href="#" style="display:none"><span>mock trigger</span></a>
@@ -44,36 +46,16 @@ function generateHistoryListContainer(entries: string[], entriesHtml: string, se
 }
 
 export function generateHistoryHtmlView(entries: string[], searchValue: string, canGoPrevious: boolean, canGoNext: boolean): string {
-    // const entriesHtml = entries.map((entry, entryIndex) => {
-    //     return `
-    //         <div class="log-entry">
-    //             <div class="media right">
-    //                 <div class="media-image">
-    //                     <div class="commit-hash-container">
-    //                         <div class="copy-button">
-    //                             <span class="btn clipboard hint--bottom hint--rounded hint--bounce"
-    //                                 data-clipboard-text="${entry.file}"
-    //                                 aria-label="Copy the full SHA">
-    //                                 <i class="octicon octicon-clippy"></i>
-    //                             </span>
-    //                         </div>
-    //                         <div class="commit-hash">
-    //                             <span class="sha-code short" data-entry-index="${entryIndex}" aria-label="${entry.column}">${entry.line}</span>
-    //                         </div>
-    //                     </div>
-    //                 </div>
-    //                 <div class="media-content">
-    //                     <a class="commit-subject-link">${htmlEncode(entry.content)}</a>
-    //                     <div class="commit-subject" data-entry-index="${entryIndex}">${htmlEncode(entry.content)}</div>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     `;
-    // }).join('');
-
     const entriesHtml = entries.map((entry, entryIndex) => {
         return `
-            <div>${entry}</div>
+            <div class="log-entry">
+                <div class="media right">
+                    <div class="media-content">
+                        <a class="commit-subject-link">${htmlEncode(entry)}</a>
+                        <div class="commit-subject" data-entry-index="${entryIndex}">${htmlEncode(entry)}</div>
+                    </div>
+                </div>
+            </div>
         `;
     }).join('');
 

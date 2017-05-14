@@ -101,7 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
         canGoPrevious = false;
         canGoNext = true;
         previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?x=' + new Date().getTime().toString());
-        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Git History (git log)').then((success) => {
+        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Three, 'Git History (git log)').then((success) => {
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
         });
@@ -116,19 +116,20 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('mock.trigger', (value: string) => {
-        console.log("============")
-        console.log(JSON.stringify(value));
+        //console.log("============")
+        console.log("value =: " + value);
+        console.log("in mock.trigger =: " + JSON.stringify(value));
         let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: '/Users/capitalmatch/Documents/cm/capital-match' });
-        console.log(result.status);
-        console.log(result.stderr.toString());
-        console.log(result.stdout.toString());
-        console.log("============")
+        //console.log(result.status);
+        //console.log(result.stderr.toString());
+        //console.log(result.stdout.toString());
+        //console.log("============")
         if (value.length >= 3 && result.status == 0) {
             matchRecords = result.stdout.toString().split(os.EOL).filter((l) => { return !_.isEmpty(l); });
         } else {
             matchRecords = [];
         }
-        searchText = value
+        searchText = value;
         provider.update(previewUri);
     });
     context.subscriptions.push(disposable);
