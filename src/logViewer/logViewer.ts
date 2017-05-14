@@ -133,4 +133,38 @@ export function activate(context: vscode.ExtensionContext) {
         provider.update(previewUri);
     });
     context.subscriptions.push(disposable);
+
+    disposable = vscode.commands.registerCommand('mock.open', (value: string) => {
+        console.log("in mock.open =: " + value);
+        let reg = new RegExp("(.*):(\\d+):(\\d+):(.*)", "g");
+        let result = reg.exec(value);
+        if (result) {
+            let file = result[1];
+            let line = parseInt(result[2]);
+            console.log("line =: " + line);
+            let column = parseInt(result[3]);
+            console.log("column =: " + column);
+            vscode.workspace.openTextDocument('/Users/capitalmatch/Documents/cm/capital-match' + '/' + file).then(document => {
+                vscode.window.showTextDocument(document).then((editor) => {
+                    editor.revealRange(new vscode.Range(line - 1, column - 1, line - 1, column - 1), vscode.TextEditorRevealType.InCenter);
+                    editor.selection = new vscode.Selection(line - 1, column - 1, line - 1, column - 1);
+                    /*vscode.commands.executeCommand('cursorMove', {
+                        to: "viewPortIfOutside",
+                        value: line
+                    }).then((success) => {
+                    }, (reason) => {
+                        vscode.window.showErrorMessage(reason);
+                    });*/
+                })
+                /*let editorScrollArgs: any = {
+                    to: "down",
+                    by: "line",
+                    value: line,
+                    revealCursor: true
+                }*/
+
+            });
+        }
+    });
+    context.subscriptions.push(disposable);
 }

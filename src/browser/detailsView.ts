@@ -17,7 +17,7 @@
             console.log("in addEventHandlers =: " + JSON.stringify(v));
             //console.log($('#mocktrigger').attr("href"));
             $("#mocktrigger").attr("href", 'command:mock.trigger?' + JSON.stringify([v]))
-            //console.log($('#mocktrigger').attr("href"));
+            console.log($('#mocktrigger').attr("href"));
             $('#mocktrigger').find('span').trigger('click');
         }
     }
@@ -29,6 +29,8 @@
             }, 3000);
         });
 
-        $('.commit-subject-link', $logView).addClass('hidden');
+        /*$('.commit-subject-link').on('click', function (e) {
+            console.log("click to open the file");
+        });*/
     }
 })();

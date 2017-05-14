@@ -51,7 +51,7 @@ export function generateHistoryHtmlView(entries: string[], searchValue: string, 
             <div class="log-entry">
                 <div class="media right">
                     <div class="media-content">
-                        <a class="commit-subject-link">${htmlEncode(entry)}</a>
+                        <a class="commit-subject-link" href="${encodeURI('command:mock.open?' + JSON.stringify([entry])) }">${htmlEncode(entry)}</a>
                         <div class="commit-subject" data-entry-index="${entryIndex}">${htmlEncode(entry)}</div>
                     </div>
                 </div>
