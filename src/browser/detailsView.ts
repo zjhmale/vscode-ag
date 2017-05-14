@@ -23,5 +23,15 @@
                 lookup(key_count_global);
             }, 3000);
         });
+
+        $(".commit-subject-link").hover(
+            function () {
+                $logView.addClass('with-details');
+                $detailsView.removeClass('hidden');
+            }, function () {
+                $detailsView.addClass('hidden');
+                $logView.removeClass('with-details');
+            }
+        );
     }
 })();

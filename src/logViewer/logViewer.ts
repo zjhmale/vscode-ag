@@ -47,8 +47,6 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
         return `
             <head>
                 <link rel="stylesheet" href="${this.getNodeModulesPath(path.join('normalize.css', 'normalize.css'))}" >
-                <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('octicons', 'font', 'octicons.css'))}" >
-                <link rel="stylesheet" href="${this.getStyleSheetPath('animate.min.css')}" >
                 <link rel="stylesheet" href="${this.getStyleSheetPath('main.css')}" >
             </head>
             <body>
@@ -62,7 +60,6 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
         return `
             <head>
                 <link rel="stylesheet" href="${this.getNodeModulesPath(path.join('normalize.css', 'normalize.css'))}" >
-                <link rel="stylesheet" href="${this.getStyleSheetPath('hint.min.css')}" >
                 <link rel="stylesheet" href="${this.getStyleSheetPath('main.css')}" >
                 <script src="${this.getNodeModulesPath(path.join('jquery', 'dist', 'jquery.min.js'))}"></script>
                 <script src="${this.getScriptFilePath('proxy.js')}"></script>
