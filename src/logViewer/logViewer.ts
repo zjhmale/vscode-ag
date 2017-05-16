@@ -63,7 +63,6 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
                 <link rel="stylesheet" href="${this.getNodeModulesPath(path.join('normalize.css', 'normalize.css'))}" >
                 <link rel="stylesheet" href="${this.getStyleSheetPath('main.css')}" >
                 <script src="${this.getNodeModulesPath(path.join('jquery', 'dist', 'jquery.min.js'))}"></script>
-                <script src="${this.getScriptFilePath('proxy.js')}"></script>
                 <script src="${this.getScriptFilePath('detailsView.js')}"></script>
             </head>
 
@@ -78,16 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
     let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
 
-    let disposable = vscode.commands.registerCommand('git.viewHistory', () => {
-        previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?x=' + new Date().getTime().toString());
-        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Three, 'Git History (git log)').then((success) => {
-        }, (reason) => {
-            vscode.window.showErrorMessage(reason);
-        });
-    });
-    context.subscriptions.push(disposable, registration);
-
-    disposable = vscode.commands.registerCommand('ag.search', () => {
+    let disposable = vscode.commands.registerCommand('ag.search', () => {
         vscode.window.showInputBox({ prompt: 'Search something here' }).then((value) => {
             let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: '/Users/capitalmatch/Documents/cm/capital-match' });
             if (value.length >= 3 && result.status == 0) {
@@ -109,21 +99,9 @@ export function activate(context: vscode.ExtensionContext) {
         });
     });
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(disposable, registration);
 
-    disposable = vscode.commands.registerCommand('mock.trigger', (value: string) => {
-        let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: '/Users/capitalmatch/Documents/cm/capital-match' });
-        if (result.status == 0) {
-            matchRecords = result.stdout.toString().split(os.EOL).filter((l) => { return !_.isEmpty(l); });
-        } else {
-            matchRecords = [];
-        }
-        searchText = value;
-        provider.update(previewUri);
-    });
-    context.subscriptions.push(disposable);
-
-    disposable = vscode.commands.registerCommand('mock.open', (value: string) => {
+    disposable = vscode.commands.registerCommand('ag.open', (value: string) => {
         let reg = new RegExp("(.*):(\\d+):(\\d+):(.*)", "g");
         let result = reg.exec(value);
         if (result) {

@@ -11,19 +11,14 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:git.viewHistory",
     "onCommand:ag.search"
   ],
   "main": "./out/src/extension",
   "contributes": {
     "commands": [
       {
-        "command": "git.viewHistory",
-        "title": "Git: View History (git log)"
-      },
-      {
         "command": "ag.search",
-        "title": "AG: Search something"
+        "title": "AG: Fuzzy searching using The Silver Searcher"
       }
     ]
   },

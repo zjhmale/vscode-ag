@@ -12,8 +12,6 @@ export function generateErrorView(error: any): string {
 
 function generateHistoryListContainer(entries: string[], entriesHtml: string, searchValue: string): string {
     return `
-        <input type="text" name="ag-filter" id="ag-filter" placeholder="Search something here" value="${searchValue}">
-        <a id="mocktrigger" href="#" style="display:none"><span>mock trigger</span></a>
         <div id="log-view" class="list-group">
             <svg xmlns="http://www.w3.org/2000/svg"></svg>
             <div id="commit-history">
@@ -32,7 +30,7 @@ export function generateHistoryHtmlView(entries: string[], searchValue: string):
             <div class="log-entry">
                 <div class="media right">
                     <div class="media-content">
-                        <a class="commit-subject-link" href="${encodeURI('command:mock.open?' + JSON.stringify([entry])) }">${htmlEncode(entry)}</a>
+                        <a class="commit-subject-link" href="${encodeURI('command:ag.open?' + JSON.stringify([entry])) }">${htmlEncode(entry)}</a>
                         <div class="commit-subject" data-entry-index="${entryIndex}">${htmlEncode(entry)}</div>
                     </div>
                 </div>
