@@ -9,6 +9,7 @@ const gitHistorySchema = 'git-history-viewer';
 let previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
 let matchRecords: string[] = [];
 let searchText = "";
+let alreadyOpened = false;
 
 class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
@@ -86,9 +87,33 @@ export function activate(context: vscode.ExtensionContext) {
     });
     context.subscriptions.push(disposable, registration);
 
+    disposable = vscode.commands.registerCommand('ag.search', () => {
+        vscode.window.showInputBox({ prompt: 'Search something here' }).then((value) => {
+            let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: '/Users/capitalmatch/Documents/cm/capital-match' });
+            if (value.length >= 3 && result.status == 0) {
+                matchRecords = result.stdout.toString().split(os.EOL).filter((l) => { return !_.isEmpty(l); });
+            } else {
+                matchRecords = [];
+            }
+            searchText = value;
+            if (alreadyOpened) {
+                provider.update(previewUri);
+            } else {
+                alreadyOpened = true;
+                previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?x=' + new Date().getTime().toString());
+                vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'Git History (git log)').then((success) => {
+                }, (reason) => {
+                    vscode.window.showErrorMessage(reason);
+                });
+            }
+        });
+    });
+
+    context.subscriptions.push(disposable);
+
     disposable = vscode.commands.registerCommand('mock.trigger', (value: string) => {
         let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: '/Users/capitalmatch/Documents/cm/capital-match' });
-        if (value.length >= 3 && result.status == 0) {
+        if (result.status == 0) {
             matchRecords = result.stdout.toString().split(os.EOL).filter((l) => { return !_.isEmpty(l); });
         } else {
             matchRecords = [];
@@ -109,7 +134,7 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.window.showTextDocument(document).then((editor) => {
                     editor.revealRange(new vscode.Range(line - 1, column - 1, line - 1, column - 1), vscode.TextEditorRevealType.InCenter);
                     editor.selection = new vscode.Selection(line - 1, column - 1, line - 1, column - 1);
-                 });
+                });
             });
         }
     });
