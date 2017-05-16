@@ -22,7 +22,6 @@ function generateHistoryListContainer(entries: string[], entriesHtml: string, se
         </div>
 
         <div id="details-view" class="hidden">
-            this details view
         </div>
         `;
 }
