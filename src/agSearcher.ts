@@ -75,39 +75,71 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
 }
 
 function getSafeRoot() {
-  let root = vscode.workspace.rootPath;
-  let safeRoot = root === undefined ? "" : root;
-  return safeRoot
+    let root = vscode.workspace.rootPath;
+    let safeRoot = root === undefined ? "" : root;
+    return safeRoot;
+}
+
+function getWord() {
+    let editor = vscode.window.activeTextEditor;
+    if (editor) {
+        let document = editor.document;
+        if (document.isDirty) {
+            document.save();
+        }
+        let position = editor.selection.active;
+        let wordRange = document.getWordRangeAtPosition(position, new RegExp("'?\\w+(\\.\\w+)?'?", "i"));
+        let currentWord = document.getText(wordRange);
+        if (currentWord.match(/\r|\n| /g)) {
+            vscode.window.showWarningMessage("Please move cursor to an Identifier");
+            return null;
+        } else {
+            return currentWord;
+        }
+    } else {
+        return null;
+    }
 }
 
 export function activate(context: vscode.ExtensionContext) {
     let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider(searchResultSchema, provider);
 
-    let disposable = vscode.commands.registerCommand('ag.search', () => {
-        vscode.window.showInputBox({ prompt: 'Search something here' }).then((value) => {
-            let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: getSafeRoot() });
-            if (value.length >= 3 && result.status == 0) {
-                matchRecords = result.stdout.toString().split(os.EOL).filter((l) => { return !_.isEmpty(l); });
-            } else {
-                vscode.window.showErrorMessage(result.stderr.toString());
-                matchRecords = [];
-            }
-            searchText = value;
-            if (alreadyOpened) {
-                provider.update(previewUri);
-            } else {
-                alreadyOpened = true;
-                previewUri = vscode.Uri.parse(searchResultSchema + '://authority/ag-search?x=' + new Date().getTime().toString());
-                vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'AG: Fuzzy searching using The Silver Searcher').then((success) => {
-                }, (reason) => {
-                    vscode.window.showErrorMessage(reason);
-                });
-            }
+    let showSearchResult = (value: string) => {
+        let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: getSafeRoot() });
+        if (result.status == 0) {
+            matchRecords = result.stdout.toString().split(os.EOL).filter((l) => { return !_.isEmpty(l); });
+        } else {
+            vscode.window.showErrorMessage(result.stderr.toString());
+            matchRecords = [];
+        }
+        searchText = value;
+        if (alreadyOpened) {
+            provider.update(previewUri);
+        } else {
+            alreadyOpened = true;
+            previewUri = vscode.Uri.parse(searchResultSchema + '://authority/ag-search?x=' + new Date().getTime().toString());
+            vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'AG: Fuzzy searching using The Silver Searcher').then((success) => {
+            }, (reason) => {
+                vscode.window.showErrorMessage(reason);
+            });
+        }
+    }
+
+    let disposable = vscode.commands.registerCommand('ag.search.freeInput', () => {
+        vscode.window.showInputBox({ prompt: 'Search something here' }).then((value: string) => {
+            showSearchResult(value);
         });
     });
-
     context.subscriptions.push(disposable, registration);
+
+    disposable = vscode.commands.registerCommand('ag.search.currentWord', () => {
+        let currentWord = getWord();
+        if (currentWord) {
+            showSearchResult(currentWord);
+        }
+    });
+    context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('ag.open', (value: string) => {
         let reg = new RegExp("(.*):(\\d+):(\\d+):(.*)", "g");
@@ -131,13 +163,11 @@ export function activate(context: vscode.ExtensionContext) {
         outputChannel.append(value.replace(searchTextPure, "{|" + searchTextPure + "|}"));
         outputChannel.show();
     });
-
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('ag.hideDetail', (value: string) => {
         outputChannel.clear();
         outputChannel.hide();
     });
-
     context.subscriptions.push(disposable);
 }

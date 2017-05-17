@@ -5,20 +5,25 @@
   "version": "0.0.1",
   "publisher": "zjhmale",
   "engines": {
-    "vscode": "^0.10.8"
+    "vscode": "^1.8.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
-    "onCommand:ag.search"
+    "onCommand:ag.search.freeInput",
+    "onCommand:ag.search.currentWord"
   ],
   "main": "./out/src/extension",
   "contributes": {
     "commands": [
       {
-        "command": "ag.search",
-        "title": "AG: Fuzzy searching using The Silver Searcher"
+        "command": "ag.search.freeInput",
+        "title": "AG: Fuzzy search with free input"
+      },
+      {
+        "command": "ag.search.currentWord",
+        "title": "AG: Fuzzy search for the identifier under the cursor"
       }
     ],
     "languages": [
@@ -54,7 +59,7 @@
     "mocha": "^2.3.3",
     "tslint": "^4.1.1",
     "typescript": "^2.1.5",
-    "vscode": "^1.0.3"
+    "vscode": "^1.0.5"
   },
   "dependencies": {
     "@types/lodash": "^4.14.64",
