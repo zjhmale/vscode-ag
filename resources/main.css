@@ -44,45 +44,28 @@ body {
     margin: 0 0 0 1em;
 }
 
-#log-view {
+#ag-search-view {
     position: relative;
     height: 100%;
     overflow-y: auto;
 }
 
-#log-view svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-#log-view svg path {
-    stroke-width: 3;
-    fill: none;
-}
-
-#log-view svg circle {
-    stroke: white;
-    stroke-width: 0.1em;
-    fill: #333;
-}
-
-#commit-history {
+#search-history {
     padding: 0;
 }
 
-.log-entry {
+.ag-search-entry {
     padding: 1em;
     position: relative;
     border-bottom: 1px solid hsla(0,0%,100%,0.3);
 }
 
-.log-entry .media-content {
+.ag-search-entry .media-content {
     position: relative;
     overflow: hidden;
 }
 
-.log-entry .commit-subject-link {
+.ag-search-entry .search-subject-link {
     display: block;
     height: 1em;
     position: absolute;
@@ -90,34 +73,23 @@ body {
     color: transparent;
 }
 
-.log-entry .commit-subject-link:hover ~ .commit-subject,
-.log-entry .commit-subject-link ~ .commit-subject:hover {
+.ag-search-entry .search-subject-link:hover ~ .search-subject,
+.ag-search-entry .search-subject-link ~ .search-subject:hover {
     text-decoration: underline;
     cursor: pointer;
 }
 
-.commit-subject {
+.search-subject {
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Errors */
-
 .error-box {
     text-align: center;
     color: #c33;
     padding: 3rem;
-}
-
-.error-box {
-  animation-duration: 0.75s;
-}
-
-.error-box .error-icon > i {
-    font-size: 4em;
-    margin-right: 0;
 }
 
 .error-box .error-title {

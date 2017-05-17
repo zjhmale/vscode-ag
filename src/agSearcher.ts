@@ -5,8 +5,8 @@ import * as cp from 'child_process'
 import * as os from 'os'
 import * as _ from 'lodash'
 
-const gitHistorySchema = 'git-history-viewer';
-let previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
+const searchResultSchema = 'ag-search-viewer';
+let previewUri = vscode.Uri.parse(searchResultSchema + '://authority/ag-search');
 let matchRecords: string[] = [];
 let searchText = "";
 let alreadyOpened = false;
@@ -36,13 +36,13 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     }
 
     private getStyleSheetPath(resourceName: string): string {
-        return vscode.Uri.file(path.join(__dirname, '..', '..', '..', 'resources', resourceName)).toString();
+        return vscode.Uri.file(path.join(__dirname, '..', '..', 'resources', resourceName)).toString();
     }
     private getScriptFilePath(resourceName: string): string {
-        return vscode.Uri.file(path.join(__dirname, '..', '..', 'src', 'browser', resourceName)).toString();
+        return vscode.Uri.file(path.join(__dirname, '..', 'src', resourceName)).toString();
     }
     private getNodeModulesPath(resourceName: string): string {
-        return vscode.Uri.file(path.join(__dirname, '..', '..', '..', 'node_modules', resourceName)).toString();
+        return vscode.Uri.file(path.join(__dirname, '..', '..', 'node_modules', resourceName)).toString();
     }
 
     private generateErrorView(error: string): string {
@@ -58,13 +58,13 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     }
 
     private generateHistoryView(): string {
-        const innerHtml = htmlGenerator.generateHistoryHtmlView(this.entries, searchText);
+        const innerHtml = htmlGenerator.generateHistoryHtmlView(this.entries);
         return `
             <head>
                 <link rel="stylesheet" href="${this.getNodeModulesPath(path.join('normalize.css', 'normalize.css'))}" >
                 <link rel="stylesheet" href="${this.getStyleSheetPath('main.css')}" >
                 <script src="${this.getNodeModulesPath(path.join('jquery', 'dist', 'jquery.min.js'))}"></script>
-                <script src="${this.getScriptFilePath('detailsView.js')}"></script>
+                <script src="${this.getScriptFilePath('eventHandler.js')}"></script>
             </head>
 
             <body>
@@ -76,7 +76,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
 
 export function activate(context: vscode.ExtensionContext) {
     let provider = new TextDocumentContentProvider();
-    let registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
+    let registration = vscode.workspace.registerTextDocumentContentProvider(searchResultSchema, provider);
 
     let disposable = vscode.commands.registerCommand('ag.search', () => {
         vscode.window.showInputBox({ prompt: 'Search something here' }).then((value) => {
@@ -92,8 +92,8 @@ export function activate(context: vscode.ExtensionContext) {
                 provider.update(previewUri);
             } else {
                 alreadyOpened = true;
-                previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?x=' + new Date().getTime().toString());
-                vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'Git History (git log)').then((success) => {
+                previewUri = vscode.Uri.parse(searchResultSchema + '://authority/ag-search?x=' + new Date().getTime().toString());
+                vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'AG: Fuzzy searching using The Silver Searcher').then((success) => {
                 }, (reason) => {
                     vscode.window.showErrorMessage(reason);
                 });
@@ -122,7 +122,6 @@ export function activate(context: vscode.ExtensionContext) {
 
     disposable = vscode.commands.registerCommand('ag.showDetail', (value: string) => {
         let searchTextPure = searchText.replace(new RegExp("\\\\b", "g"), "");
-        console.log(searchTextPure);
         outputChannel.append(value.replace(searchTextPure, "{|" + searchTextPure + "|}"));
         outputChannel.show();
     });

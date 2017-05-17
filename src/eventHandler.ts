@@ -10,7 +10,7 @@
     };
 
     function addEventHandlers() {
-        $(".commit-subject-link").hover(
+        $(".search-subject-link").hover(
             function (e) {
                 let content = $(e.target).text().split(new RegExp(":\\d+:\\d+:", "g"))[1];
                 $("#showDetail").attr("href", 'command:ag.showDetail?' + JSON.stringify([content]))
