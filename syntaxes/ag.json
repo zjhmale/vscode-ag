@@ -1,0 +1,10 @@
+{
+	"name": "source-ag-output",
+	"scopeName": "source.ag.output",
+	"patterns": [
+		{
+			"name": "token.info-token",
+			"match": "\\{\\|(.*)\\|\\}"
+		}
+	]
+}

@@ -121,7 +121,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('ag.showDetail', (value: string) => {
-        outputChannel.append(value);
+        let searchTextPure = searchText.replace(new RegExp("\\\\b", "g"), "");
+        console.log(searchTextPure);
+        outputChannel.append(value.replace(searchTextPure, "{|" + searchTextPure + "|}"));
         outputChannel.show();
     });
 

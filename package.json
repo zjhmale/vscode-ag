@@ -20,6 +20,21 @@
         "command": "ag.search",
         "title": "AG: Fuzzy searching using The Silver Searcher"
       }
+    ],
+    "languages": [
+      {
+        "id": "source-ag-output",
+        "mimetypes": [
+          "text/x-code-output"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "source-ag-output",
+        "scopeName": "source.ag.output",
+        "path": "./syntaxes/ag.json"
+      }
     ]
   },
   "scripts": {
