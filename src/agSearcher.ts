@@ -74,13 +74,19 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     }
 }
 
+function getSafeRoot() {
+  let root = vscode.workspace.rootPath;
+  let safeRoot = root === undefined ? "" : root;
+  return safeRoot
+}
+
 export function activate(context: vscode.ExtensionContext) {
     let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider(searchResultSchema, provider);
 
     let disposable = vscode.commands.registerCommand('ag.search', () => {
         vscode.window.showInputBox({ prompt: 'Search something here' }).then((value) => {
-            let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: '/Users/capitalmatch/Documents/cm/capital-match' });
+            let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: getSafeRoot() });
             if (value.length >= 3 && result.status == 0) {
                 matchRecords = result.stdout.toString().split(os.EOL).filter((l) => { return !_.isEmpty(l); });
             } else {
