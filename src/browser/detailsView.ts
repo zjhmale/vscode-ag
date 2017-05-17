@@ -5,25 +5,19 @@
         (window as any).GITHISTORY.initializeDetailsView();
     });
 
-    let $logView: JQuery;
-    let $detailsView: JQuery;
     (window as any).GITHISTORY.initializeDetailsView = function () {
-        $logView = $('#log-view');
-        $detailsView = $('#details-view');
-
         addEventHandlers();
     };
 
     function addEventHandlers() {
         $(".commit-subject-link").hover(
             function (e) {
-                $logView.addClass('with-details');
-                $detailsView.removeClass('hidden');
-                $detailsView.text($(e.target).text().split(new RegExp(":\\d+:\\d+:", "g"))[1]);
+                let content = $(e.target).text().split(new RegExp(":\\d+:\\d+:", "g"))[1];
+                $("#showDetail").attr("href", 'command:ag.showDetail?' + JSON.stringify([content]))
+                $('#showDetail').find('span').trigger('click');
             }, function () {
-                $detailsView.text("");
-                $detailsView.addClass('hidden');
-                $logView.removeClass('with-details');
+                $("#hideDetail").attr("href", 'command:ag.hideDetail?' + JSON.stringify([]))
+                $('#hideDetail').find('span').trigger('click');
             }
         );
     }

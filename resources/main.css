@@ -50,10 +50,6 @@ body {
     overflow-y: auto;
 }
 
-#log-view.with-details {
-    height: calc(100% - 8rem);
-}
-
 #log-view svg {
     position: absolute;
     top: 0;
@@ -130,27 +126,4 @@ body {
 
 .error-box .error-details {
     font-weight: normal;
-}
-
-
-/* Details View */
-
-#details-view {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 5rem;
-    overflow: auto;
-    padding: 1rem;
-    border: 1px solid hsla(0,0%,100%,0.12);
-    border-top: 1px solid hsla(0,0%,100%,0.50);
-    border-bottom: none;
-}
-
-#details-view .commit-subject {
-    font-size: 1.4em;
-    font-weight: lighter;
-    line-height: 2;
-    margin: 0;
 }

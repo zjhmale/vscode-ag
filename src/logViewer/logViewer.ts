@@ -10,6 +10,7 @@ let previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history')
 let matchRecords: string[] = [];
 let searchText = "";
 let alreadyOpened = false;
+let outputChannel = vscode.window.createOutputChannel('AG Detail')
 
 class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
@@ -17,7 +18,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
 
     public async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
         try {
-            this.entries = matchRecords;
+            this.entries = matchRecords.concat(_.times(8, _.constant("")));
             let html = this.generateHistoryView();
             return html;
         }
@@ -83,6 +84,7 @@ export function activate(context: vscode.ExtensionContext) {
             if (value.length >= 3 && result.status == 0) {
                 matchRecords = result.stdout.toString().split(os.EOL).filter((l) => { return !_.isEmpty(l); });
             } else {
+                vscode.window.showErrorMessage(result.stderr.toString());
                 matchRecords = [];
             }
             searchText = value;
@@ -116,5 +118,19 @@ export function activate(context: vscode.ExtensionContext) {
             });
         }
     });
+    context.subscriptions.push(disposable);
+
+    disposable = vscode.commands.registerCommand('ag.showDetail', (value: string) => {
+        outputChannel.append(value);
+        outputChannel.show();
+    });
+
+    context.subscriptions.push(disposable);
+
+    disposable = vscode.commands.registerCommand('ag.hideDetail', (value: string) => {
+        outputChannel.clear();
+        outputChannel.hide();
+    });
+
     context.subscriptions.push(disposable);
 }

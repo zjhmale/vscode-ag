@@ -12,6 +12,8 @@ export function generateErrorView(error: any): string {
 
 function generateHistoryListContainer(entries: string[], entriesHtml: string, searchValue: string): string {
     return `
+        <a id="showDetail" href="#" style="display:none"><span>showDetail</span></a>
+        <a id="hideDetail" href="#" style="display:none"><span>hideDetail</span></a>
         <div id="log-view" class="list-group">
             <svg xmlns="http://www.w3.org/2000/svg"></svg>
             <div id="commit-history">
