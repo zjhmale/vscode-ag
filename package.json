@@ -23,9 +23,18 @@
       },
       {
         "command": "ag.search.currentWord",
-        "title": "AG: Fuzzy search for the identifier under the cursor"
+        "title": "AG: Fuzzy search with the identifier under the cursor"
       }
     ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "ag.search.currentWord",
+          "when": "editorFocus",
+          "group": "ag@1"
+        }
+      ]
+    },
     "languages": [
       {
         "id": "source-ag-output",
