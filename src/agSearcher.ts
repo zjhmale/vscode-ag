@@ -148,7 +148,7 @@ export function activate(context: vscode.ExtensionContext) {
             let file = result[1];
             let line = parseInt(result[2]);
             let column = parseInt(result[3]);
-            vscode.workspace.openTextDocument('/Users/capitalmatch/Documents/cm/capital-match' + '/' + file).then(document => {
+            vscode.workspace.openTextDocument(getSafeRoot() + '/' + file).then(document => {
                 vscode.window.showTextDocument(document).then((editor) => {
                     editor.revealRange(new vscode.Range(line - 1, column - 1, line - 1, column - 1), vscode.TextEditorRevealType.InCenter);
                     editor.selection = new vscode.Selection(line - 1, column - 1, line - 1, column - 1);
