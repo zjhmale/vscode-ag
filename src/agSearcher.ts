@@ -113,16 +113,21 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showErrorMessage(result.stderr.toString());
             matchRecords = [];
         }
-        searchText = value;
-        if (alreadyOpened) {
-            provider.update(previewUri);
+
+        if (matchRecords.length != 0) {
+            searchText = value;
+            if (alreadyOpened) {
+                provider.update(previewUri);
+            } else {
+                alreadyOpened = true;
+                previewUri = vscode.Uri.parse(searchResultSchema + '://authority/ag-search?x=' + new Date().getTime().toString());
+                vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'AG: Fuzzy searching using The Silver Searcher').then((success) => {
+                }, (reason) => {
+                    vscode.window.showErrorMessage(reason);
+                });
+            }
         } else {
-            alreadyOpened = true;
-            previewUri = vscode.Uri.parse(searchResultSchema + '://authority/ag-search?x=' + new Date().getTime().toString());
-            vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'AG: Fuzzy searching using The Silver Searcher').then((success) => {
-            }, (reason) => {
-                vscode.window.showErrorMessage(reason);
-            });
+            vscode.window.showWarningMessage(`Can no find anything inside ${getSafeRoot()}`);
         }
     }
 
