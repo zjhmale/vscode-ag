@@ -170,4 +170,10 @@ export function activate(context: vscode.ExtensionContext) {
         outputChannel.hide();
     });
     context.subscriptions.push(disposable);
+
+    vscode.workspace.onDidCloseTextDocument((textDocument) => {
+        if (textDocument.fileName == "/ag-search") {
+            alreadyOpened = false;
+        }
+    }, null, context.subscriptions);
 }
