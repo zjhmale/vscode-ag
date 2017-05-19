@@ -1,65 +1,25 @@
-# vscode-ag README
+# The Silver Searcher for Visual Studio Code
 
-This is the README for your extension "vscode-ag". After writing up a brief description, we recommend including the following sections.
+[![Version](https://vsmarketplacebadge.apphb.com/version/zjhmale.vscode-ag.svg)](https://marketplace.visualstudio.com/items?itemName=zjhmale.vscode-ag)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/zjhmale.vscode-ag.svg)](https://marketplace.visualstudio.com/items?itemName=zjhmale.vscode-ag)
+[![Ratings](https://vsmarketplacebadge.apphb.com/rating/zjhmale.vscode-ag.svg)](https://marketplace.visualstudio.com/items?itemName=zjhmale.vscode-ag)
 
-## Features
+[![Build Status](https://travis-ci.org/zjhmale/vscode-ag.svg?branch=master)](https://travis-ci.org/zjhmale/vscode-ag)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/zjhmale/vscode-ag?branch=master&svg=true)](https://ci.appveyor.com/project/zjhmale/vscode-ag)
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## Implemented features
 
-For example if there is an image subfolder under your extension project workspace:
+| command screenshot | command name |
+|---|---|
+| [Fuzzy search with free input](https://github.com/zjhmale/vscode-ag/blob/master/FEATURES.md#search-with-free-input) | ag.search.freeInput |
+| [Fuzzy search with the identifier under the cursor](https://github.com/zjhmale/vscode-ag/blob/master/FEATURES.md#search-with-identifier-under-cursor) | ag.search.currentWord |
 
-\!\[feature X\]\(images/feature-x.png\)
+## Installation
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+1. Within Visual Studio Code, open the command palette (Ctrl-Shift-P / Cmd-Shift-P).
+2. Select `Install Extension` and search for **vscode-ag** or run `ext install vscode-ag`.
+3. [Install The Silver Searcher](https://github.com/ggreer/the_silver_searcher) and make sure the **ag** executable is on your `PATH`.
 
-## Requirements
+## License
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on OSX or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on OSX or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (OSX) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+[BSD 3-Clause](https://opensource.org/licenses/BSD-3-Clause).
