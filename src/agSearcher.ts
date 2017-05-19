@@ -169,7 +169,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     disposable = vscode.commands.registerCommand('ag.showDetail', (value: string) => {
         let searchTextPure = searchText.replace(new RegExp("\\\\b", "g"), "");
-        outputChannel.append(value.replace(searchTextPure, "{|" + searchTextPure + "|}"));
+        outputChannel.append(value.replace(new RegExp(searchTextPure, "i"), (match, idx, text) => { return "{|" + match + "|}" }));
         outputChannel.show();
     });
     context.subscriptions.push(disposable);

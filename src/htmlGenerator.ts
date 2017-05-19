@@ -15,7 +15,7 @@ export function generateHistoryHtmlView(entries: string[]): string {
             <div class="ag-search-entry">
                 <div class="media right">
                     <div class="media-content">
-                        <a class="search-subject-link" href="${encodeURI('command:ag.open?' + JSON.stringify([entry]))}">${htmlEncode(entry)}</a>
+                        <a class="search-subject-link" href="#">${htmlEncode(entry)}</a>
                         <div class="search-subject" data-entry-index="${entryIndex}">${htmlEncode(entry)}</div>
                     </div>
                 </div>
