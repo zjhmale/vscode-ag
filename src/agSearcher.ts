@@ -106,7 +106,11 @@ export function activate(context: vscode.ExtensionContext) {
     let registration = vscode.workspace.registerTextDocumentContentProvider(searchResultSchema, provider);
 
     let showSearchResult = (value: string) => {
-        let result = cp.spawnSync("ag", ["--nocolor", "--nogroup", "--column", value], { cwd: getSafeRoot() });
+        let args = ["--nocolor", "--nogroup", "--column"];
+        if (os.platform() == 'win32') {
+            args = args.concat(["--vimgrep"]);
+        }
+        let result = cp.spawnSync("ag", args.concat([value]), { cwd: getSafeRoot() });
         if (result.status == 0) {
             matchRecords = result.stdout.toString().split(os.EOL).filter((l) => { return !_.isEmpty(l); });
         } else {
