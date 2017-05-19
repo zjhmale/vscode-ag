@@ -13,8 +13,20 @@ import * as assert from 'assert';
 suite("Extension Tests", () => {
 
     // Defines a Mocha unit test
-    test("Something 1", () => {
-        assert.equal(-1, [1, 2, 3].indexOf(5));
-        assert.equal(-1, [1, 2, 3].indexOf(0));
+    test("Extract filepath, line number, column number and content from match result", () => {
+        let reg = new RegExp("(.*):(\\d+):(\\d+):(.*)", "g");
+        let result = reg.exec("src/Capital/Client/REST.hs:41:8:  -- * Investors");
+        if (result) {
+            let file = result[1];
+            let line = parseInt(result[2]);
+            let column = parseInt(result[3]);
+            assert.equal(file, "src/Capital/Client/REST.hs");
+            assert.equal(line, "41");
+            assert.equal(column, "8");
+        }
+    });
+
+    test("url encode", () => {
+        assert.equal(encodeURIComponent("src/Capital/Client/REST.hs:41:8:  -- * Investors"), 'src%2FCapital%2FClient%2FREST.hs%3A41%3A8%3A%20%20--%20*%20Investors');
     });
 });
