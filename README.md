@@ -13,6 +13,7 @@
 |---|---|
 | [Fuzzy search with free input](https://github.com/zjhmale/vscode-ag/blob/master/FEATURES.md#search-with-free-input) | ag.search.freeInput |
 | [Fuzzy search with the identifier under the cursor](https://github.com/zjhmale/vscode-ag/blob/master/FEATURES.md#search-with-identifier-under-cursor) | ag.search.currentWord |
+| [Fuzzy search with the selected text](https://github.com/zjhmale/vscode-ag/blob/master/FEATURES.md#search-with-identifier-under-cursor) | ag.search.selection |
 
 ## Installation
 
