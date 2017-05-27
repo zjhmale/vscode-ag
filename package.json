@@ -28,7 +28,8 @@
   ],
   "activationEvents": [
     "onCommand:ag.search.freeInput",
-    "onCommand:ag.search.currentWord"
+    "onCommand:ag.search.currentWord",
+    "onCommand:ag.search.selection"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -40,6 +41,10 @@
       {
         "command": "ag.search.currentWord",
         "title": "AG: Fuzzy search with the identifier under the cursor"
+      },
+      {
+        "command": "ag.search.selection",
+        "title": "AG: Fuzzy search with the selected text"
       }
     ],
     "menus": {
@@ -48,6 +53,11 @@
           "command": "ag.search.currentWord",
           "when": "editorFocus",
           "group": "ag@1"
+        },
+        {
+          "command": "ag.search.selection",
+          "when": "editorFocus",
+          "group": "ag@2"
         }
       ]
     },

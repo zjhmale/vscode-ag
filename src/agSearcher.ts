@@ -148,7 +148,17 @@ export function activate(context: vscode.ExtensionContext) {
             showSearchResult(currentWord);
         }
     });
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(disposable, registration);
+
+    disposable = vscode.commands.registerCommand('ag.search.selection', () => {
+        let editor = vscode.window.activeTextEditor;
+        if (editor) {
+            let selection = editor.selection;
+            let text = editor.document.getText(selection);
+            showSearchResult(text);
+        };
+    });
+    context.subscriptions.push(disposable, registration);
 
     disposable = vscode.commands.registerCommand('ag.open', (value: string) => {
         let reg = new RegExp("(.*):(\\d+):(\\d+):(.*)", "g");
