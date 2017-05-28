@@ -74,6 +74,10 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     }
 }
 
+function escapeRegExp(text: string) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+}
+
 function getSafeRoot() {
     let root = vscode.workspace.rootPath;
     let safeRoot = root === undefined ? "" : root;
@@ -137,7 +141,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     let disposable = vscode.commands.registerCommand('ag.search.freeInput', () => {
         vscode.window.showInputBox({ prompt: 'Search something here' }).then((value: string) => {
-            showSearchResult(value);
+            if (value.startsWith("\b") && value.endsWith("\b")) {
+                showSearchResult(escapeRegExp(value));
+            } else {
+                showSearchResult(value);
+            }
         });
     });
     context.subscriptions.push(disposable, registration);
@@ -145,7 +153,7 @@ export function activate(context: vscode.ExtensionContext) {
     disposable = vscode.commands.registerCommand('ag.search.currentWord', () => {
         let currentWord = getWord();
         if (currentWord) {
-            showSearchResult(currentWord);
+            showSearchResult(escapeRegExp(currentWord));
         }
     });
     context.subscriptions.push(disposable, registration);
@@ -155,7 +163,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (editor) {
             let selection = editor.selection;
             let text = editor.document.getText(selection);
-            showSearchResult(text);
+            showSearchResult(escapeRegExp(text));
         };
     });
     context.subscriptions.push(disposable, registration);
