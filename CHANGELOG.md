@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+* Escape regexp special characters [#14](https://github.com/zjhmale/vscode-ag/issues/14)
+
 ## 0.3.0
 
 * Add search selected text command [#11](https://github.com/zjhmale/vscode-ag/issues/11)
