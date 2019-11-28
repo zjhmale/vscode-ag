@@ -5,44 +5,50 @@ import * as cp from 'child_process'
 import * as os from 'os'
 import * as _ from 'lodash'
 
-const searchResultSchema = 'ag-search-viewer';
-let previewUri = vscode.Uri.parse(searchResultSchema + '://authority/ag-search');
 let matchRecords: string[] = [];
 let searchText = "";
 let alreadyOpened = false;
 let outputChannel = vscode.window.createOutputChannel('AG Detail')
 
-class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
-    private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
+class WebViewContentProvider {
     private entries: string[];
+    private panel: vscode.WebviewPanel;
 
-    public async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
+    public update() {
+        let html: string;
         try {
             this.entries = matchRecords.concat(_.times(8, _.constant("")));
-            let html = this.generateHistoryView();
-            return html;
+            html = this.generateHistoryView();
         }
         catch (error) {
-            return this.generateErrorView(error);
+            html = this.generateErrorView(error);
         }
+        
+        this.panel.webview.html = html;
     }
 
-    get onDidChange(): vscode.Event<vscode.Uri> {
-        return this._onDidChange.event;
-    }
-
-    public update(uri: vscode.Uri) {
-        this._onDidChange.fire(uri);
+    public create() {
+      this.panel = vscode.window.createWebviewPanel(
+        'ag-search-viwer',
+        'AG: Fuzzy searching using The Silver Searcher',
+        vscode.ViewColumn.Two,
+        {
+          enableScripts: true,
+          enableCommandUris: true,
+        }
+      );
+      
+      this.update();
     }
 
     private getStyleSheetPath(resourceName: string): string {
-        return vscode.Uri.file(path.join(__dirname, '..', '..', 'resources', resourceName)).toString();
+        return this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(__dirname, '..', '..', 'resources', resourceName))).toString();
     }
     private getScriptFilePath(resourceName: string): string {
-        return vscode.Uri.file(path.join(__dirname, '..', 'src', resourceName)).toString();
+        return this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(__dirname, '..', 'src', resourceName))).toString();
     }
     private getNodeModulesPath(resourceName: string): string {
-        return vscode.Uri.file(path.join(__dirname, '..', '..', 'node_modules', resourceName)).toString();
+        return this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(__dirname, '..', '..', 'node_modules', resourceName))).toString();
     }
 
     private generateErrorView(error: string): string {
@@ -106,8 +112,7 @@ function getWord() {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    let provider = new TextDocumentContentProvider();
-    let registration = vscode.workspace.registerTextDocumentContentProvider(searchResultSchema, provider);
+    let provider = new WebViewContentProvider();
 
     let showSearchResult = (value: string) => {
         let args = ["--nocolor", "--nogroup", "--column"];
@@ -125,14 +130,9 @@ export function activate(context: vscode.ExtensionContext) {
         if (matchRecords.length != 0) {
             searchText = value;
             if (alreadyOpened) {
-                provider.update(previewUri);
+                provider.update();
             } else {
-                alreadyOpened = true;
-                previewUri = vscode.Uri.parse(searchResultSchema + '://authority/ag-search?x=' + new Date().getTime().toString());
-                vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'AG: Fuzzy searching using The Silver Searcher').then((success) => {
-                }, (reason) => {
-                    vscode.window.showErrorMessage(reason);
-                });
+                provider.create();
             }
         } else {
             vscode.window.showWarningMessage(`Can no find anything inside ${getSafeRoot()}`);
@@ -148,7 +148,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         });
     });
-    context.subscriptions.push(disposable, registration);
+    context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('ag.search.currentWord', () => {
         let currentWord = getWord();
@@ -156,7 +156,7 @@ export function activate(context: vscode.ExtensionContext) {
             showSearchResult(escapeRegExp(currentWord));
         }
     });
-    context.subscriptions.push(disposable, registration);
+    context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('ag.search.selection', () => {
         let editor = vscode.window.activeTextEditor;
@@ -166,7 +166,7 @@ export function activate(context: vscode.ExtensionContext) {
             showSearchResult(escapeRegExp(text));
         };
     });
-    context.subscriptions.push(disposable, registration);
+    context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('ag.open', (value: string) => {
         let reg = new RegExp("(.*):(\\d+):(\\d+):(.*)", "g");
@@ -176,7 +176,7 @@ export function activate(context: vscode.ExtensionContext) {
             let line = parseInt(result[2]);
             let column = parseInt(result[3]);
             vscode.workspace.openTextDocument(getSafeRoot() + '/' + file).then(document => {
-                vscode.window.showTextDocument(document).then((editor) => {
+                vscode.window.showTextDocument(document, vscode.ViewColumn.One).then((editor) => {
                     editor.revealRange(new vscode.Range(line - 1, column - 1, line - 1, column - 1), vscode.TextEditorRevealType.InCenter);
                     editor.selection = new vscode.Selection(line - 1, column - 1, line - 1, column - 1);
                 });
